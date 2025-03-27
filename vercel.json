@@ -11,5 +11,8 @@
         "src": "/(.*)",
         "dest": "server.js"
       }
-    ]
+    ],
+    "env": {
+      "MONGO_URI": "mongodb+srv://Luis_Castro_Iturbide:juan13luis7@cluster0.nhgsaca.mongodb.net/esp32_data?retryWrites=true&w=majority"
+    }
   }

@@ -1,18 +1,22 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 
-// Conexión a MongoDB
-const mongoURI = 'mongodb+srv://Luis_Castro_Iturbide:juan13luis7@cluster0.nhgsaca.mongodb.net/esp32_data?retryWrites=true&w=majority';
-mongoose.connect(mongoURI, {
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Conexión MongoDB (usando variable de entorno)
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://Luis_Castro_Iturbide:juan13luis7@cluster0.nhgsaca.mongodb.net/esp32_data?retryWrites=true&w=majority', {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 });
 
-// Definir el esquema y modelo ANTES de las rutas
-const dataSchema = new mongoose.Schema({
+// Modelo de datos
+const DataSchema = new mongoose.Schema({
   sensorID: Number,
   accelerationX: Number,
   accelerationY: Number,
@@ -23,35 +27,26 @@ const dataSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
-// Crear el modelo
-const Data = mongoose.model('Data', dataSchema);
+const Data = mongoose.model('Data', DataSchema);
 
-// Middleware
-app.use(bodyParser.json());
+// Endpoint de prueba
+app.get('/', (req, res) => {
+  res.send('API de Intermediario ESP8266-MongoDB');
+});
 
-// Ruta POST corregida
+// Endpoint para recibir datos
 app.post('/api/data', async (req, res) => {
   try {
-    // Si recibes un array de datos
+    let result;
     if (Array.isArray(req.body)) {
-      const savedData = await Data.insertMany(req.body);
-      return res.status(200).json({
-        message: `${savedData.length} documentos insertados`,
-        data: savedData
-      });
+      result = await Data.insertMany(req.body);
+    } else {
+      result = await Data.create(req.body);
     }
-    
-    // Si recibes un solo objeto
-    const newData = new Data(req.body);
-    const savedData = await newData.save();
-    res.status(201).json(savedData);
-    
+    res.status(200).json({ success: true, data: result });
   } catch (error) {
-    console.error('Error detallado:', error);
-    res.status(500).json({
-      error: 'Error al almacenar los datos',
-      details: error.message
-    });
+    console.error('Error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
