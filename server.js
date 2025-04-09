@@ -17,23 +17,17 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://Luis_Castro_Iturbide:ju
 
 // Modelo de datos
 const DataSchema = new mongoose.Schema({
- //sensorID: Number,
-  //accelerationX: Number,
-  //accelerationY: Number,
-  //accelerationZ: Number,
-  //temperature: Number,
-  //dominantFrequency: Number,
-  //magnitude: Number,
-  sensorID: Number,
-  accelerationX: Number,
-  accelerationY: Number,
-  accelerationZ: Number,
-  temperature: Number,
-  dominantFrequency: Number,
-  frequencyX: Number, // opcional si quieres guardar todos los ejes
-  frequencyY: Number,
-  frequencyZ: Number,
-  magnitude: Number, 
+
+  sensorID:  { type: Number,
+ required: true },  accelerationX: { type:  Number, required: true },
+  accelerationY: { type:  Number, required: true },
+  accelerationZ: { type:  Number, required: true },
+  temperature: { type:  Number, required: true },
+  dominantFrequency: { type:  Number, required: true },
+  frequencyX:  { type: Number,  required: true },// opcional si quieres guardar todos los ejes
+  frequencyY: { type:  Number, required: true },
+  frequencyZ: { type:  Number, required: true },
+  magnitude: { type:  Number, required: true }, 
   timestamp: { type: Date, default: Date.now }
 });
 
