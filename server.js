@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+// Asegúrate de tener ESTO al inicio de tu server.js
+app.use(express.json()); // Para Express 4.16+ (mejor que body-parser)
 
 const app = express();
 
